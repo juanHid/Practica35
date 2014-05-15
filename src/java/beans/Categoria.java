@@ -10,10 +10,7 @@ import java.util.logging.Logger;
 import managers.DatabaseManager;
 import managers.LoggerManager;
 
-/**
- *
- * @author confalonieri
- */
+
 public class Categoria {
 
     private String tipo;
