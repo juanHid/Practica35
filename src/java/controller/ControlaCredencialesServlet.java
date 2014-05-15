@@ -64,8 +64,8 @@ public class ControlaCredencialesServlet extends HttpServlet {
         if ((usuario != null && !usuario.equals("")) && (password != null && !password.equals(""))) {
 
             //Controlo que tipo de usuario
-           // tipoUsuario = controlaTipoUsuario(usuario, password);
-            tipoUsuario = controlaTipoUsuarioTest(usuario, password);
+            tipoUsuario = controlaTipoUsuario(usuario, password);
+           // tipoUsuario = controlaTipoUsuarioTest(usuario, password);
             //Lo almaceno en la sesion
             session.setAttribute("usuario", tipoUsuario);
 
@@ -101,7 +101,7 @@ public class ControlaCredencialesServlet extends HttpServlet {
     } //Acaba el doPost
 
     // CONTROLA TIPO USUARIO
-    private String controlaTipoUsuario(String usuario, String password) {
+    private String controlaTipoUsuarioOLD(String usuario, String password) {
         String tmp = null;
         //TODO 
         //Codigo para controlar si existe el usuario en BD
@@ -109,7 +109,7 @@ public class ControlaCredencialesServlet extends HttpServlet {
         return tmp;
     }
     
-       private String controlaTipoUsuarioTest(String usuario, String password) {
+       private String controlaTipoUsuario(String usuario, String password) {
         String tmp = null;
         //TODO 
         //Codigo para controlar si existe el usuario en BD
