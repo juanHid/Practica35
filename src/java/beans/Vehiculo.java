@@ -105,15 +105,15 @@ public class Vehiculo {
     public String toString() {
         String vehString;
         
-        vehString = "[Matricula: " + this.matricula + "]<br>"
-                + "[Color: " + this.color + "]<br>"
-                + "[Fabricante: " + this.fabricante + "]<br>"
-                + "[VelocidadMin: " + this.velocidadMin + "]<br>"
-                + "[VelocidadMax: " + this.velocidadMax + "]<br>"
-              //  + "[Modelo: " + this.modelo + "]<br>"
-                + "[NrRuedas: " + this.nrDeRuedas + "]<br>"
-                + "[Motor: " + this.motor.toString() + "]"
-                + "[Tipo Vehiculo: " + this.getClass().getSimpleName() + "]";
+        vehString =   
+                  "Tipo Vehiculo: " + this.getClass().getSimpleName()+"<br/> "
+                + "Fabricante: " + this.fabricante + "<br/>"
+                + "Motor: " + this.motor.toString() + "<br/>"
+                + "Color: " + this.color + "<br>"
+                + "Matricula: " + this.matricula + "<br>"
+                + "VelocidadMin: " + this.velocidadMin + " Km/h.<br/>"
+                + "VelocidadMax: " + this.velocidadMax + " Km/h.<br/>"
+                + "NrRuedas: " + this.nrDeRuedas + "<br/><hr><br/>";
                 
         // this.categoria.toString();
 
