@@ -1,14 +1,7 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package beans;
 
-/**
- *
- * @author confalonieri
- */
+
 public class Vehiculo {
 
     //propriedades de la superclase Vehiculo
@@ -77,14 +70,7 @@ public class Vehiculo {
         this.velocidadMax = velocidadMax;
     }
 
-  /* public String getModelo() {
-        return modelo;
-    }
 
-    public void setModelo(String modelo) {
-        this.modelo = modelo;
-    }
-*/
     public Motor getMotor() {
         return motor;
     }
@@ -115,7 +101,6 @@ public class Vehiculo {
                 + "VelocidadMax: " + this.velocidadMax + " Km/h.<br/>"
                 + "NrRuedas: " + this.nrDeRuedas + "<br/><hr><br/>";
                 
-        // this.categoria.toString();
 
         return vehString;
     }
