@@ -1,16 +1,11 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 
 package beans;
 
 
 public class Moto extends Vehiculo {
     
-    
-    
+
     public Moto() {
         super();
     }
@@ -20,8 +15,7 @@ public class Moto extends Vehiculo {
        this.nrDeRuedas = 2;
     }
     
-   
-    
+
     public Moto(String matricula, String color, String fabricante, int velocidadMax) {
         
         this.matricula = matricula;
@@ -31,8 +25,6 @@ public class Moto extends Vehiculo {
         this.velocidadMax = velocidadMax;
         
     }
-    
-    
-    
+
     
 }
