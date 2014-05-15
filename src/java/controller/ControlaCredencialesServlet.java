@@ -7,11 +7,17 @@ package controller;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import managers.DatabaseManager;
 import managers.LoggerManager;
 
 public class ControlaCredencialesServlet extends HttpServlet {
@@ -62,18 +68,20 @@ public class ControlaCredencialesServlet extends HttpServlet {
         if ((usuario != null && !usuario.equals("")) && (password != null && !password.equals(""))) {
 
             //Controlo que tipo de usuario
-            tipoUsuario = controlaTipoUsuario(usuario, password);
-
+           // tipoUsuario = controlaTipoUsuario(usuario, password);
+            tipoUsuario = controlaTipoUsuarioTest(usuario, password);
             //Lo almaceno en la sesion
             session.setAttribute("usuario", tipoUsuario);
 
             //Si es admin lo enviamos a la pagina que se pueden crear coches y motos
             //Si no pues a otra en la que se visualizan los datos
-            if (tipoUsuario.equals("admin")) {
+            if (tipoUsuario!=null && tipoUsuario.equals("admin")) {
 
                 path = "/index.jsp";
-            } else {
+            } else if(tipoUsuario!=null && tipoUsuario.equals("usuarioReg")){
                 path = "/VisualizaDatosServlet";
+            } else{
+                path = "/login.jsp";
             }
 
             //Imprimimos en el log el tipo de usuario
@@ -104,6 +112,59 @@ public class ControlaCredencialesServlet extends HttpServlet {
         tmp = usuario;
         return tmp;
     }
+    
+       private String controlaTipoUsuarioTest(String usuario, String password) {
+        String tmp = null;
+        //TODO 
+        //Codigo para controlar si existe el usuario en BD
+        //Comprobar si existe en la base de datos
+        
+        // si existe mirar si coincide el password
+        // obtener el tipo de usuario
+        // si el tipo es 1 es admin
+        // si es 2 es usuario normal
+        DatabaseManager.openConnection();
+        
+        String usuarioSql="SELECT * FROM usuarios WHERE usuario='"+usuario+"'";
+        PreparedStatement stm;
+        ResultSet resultSet;
+        try {
+            stm=DatabaseManager.conn.prepareStatement(usuarioSql);
+            resultSet=stm.executeQuery();
+            String passBd=null;
+            int tipoBd=0;
+            while(resultSet.next()){
+               // String usuarioBd=resultSet.getString("usuario");
+                passBd=resultSet.getString("pass");
+                tipoBd=resultSet.getInt("tipo"); 
+            }
+            if(passBd!=null && passBd.equals(password)){
+                if(tipoBd==1){
+                    tmp="admin";
+                }
+                if(tipoBd==2){
+                    tmp="usuarioReg";
+                }
+                LoggerManager.getLog().info("usuario tipo "+tipoBd);
+            }
+            
+            stm.close();
+            resultSet.close();
+            
+        } catch (SQLException ex) {
+            LoggerManager.getLog().error(ex.toString());
+        }finally{
+            DatabaseManager.closeConnection();
+            
+        }
+        
+        
+        
+       
+        return tmp;
+    }
+    
+    
 
     @Override
     public String getServletInfo() {
