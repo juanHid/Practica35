@@ -5,10 +5,7 @@
  */
 package beans;
 
-/**
- *
- * @author confalonieri
- */
+
 public class Coche extends Vehiculo {
 
     public Coche() {
