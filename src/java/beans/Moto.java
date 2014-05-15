@@ -6,10 +6,7 @@
 
 package beans;
 
-/**
- *
- * @author confalonieri
- */
+
 public class Moto extends Vehiculo {
     
     
