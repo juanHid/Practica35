@@ -1,4 +1,3 @@
-
 package controller;
 
 import java.io.IOException;
@@ -65,18 +64,18 @@ public class ControlaCredencialesServlet extends HttpServlet {
 
             //Controlo que tipo de usuario
             tipoUsuario = controlaTipoUsuario(usuario, password);
-           // tipoUsuario = controlaTipoUsuarioTest(usuario, password);
+            // tipoUsuario = controlaTipoUsuarioTest(usuario, password);
             //Lo almaceno en la sesion
             session.setAttribute("usuario", tipoUsuario);
 
             //Si es admin lo enviamos a la pagina que se pueden crear coches y motos
             //Si no pues a otra en la que se visualizan los datos
-            if (tipoUsuario!=null && tipoUsuario.equals("admin")) {
+            if (tipoUsuario != null && tipoUsuario.equals("admin")) {
 
                 path = "/index.jsp";
-            } else if(tipoUsuario!=null && tipoUsuario.equals("usuarioReg")){
+            } else if (tipoUsuario != null && tipoUsuario.equals("usuarioReg")) {
                 path = "/VisualizaDatosServlet";
-            } else{
+            } else {
                 path = "/login.jsp";
             }
 
@@ -108,59 +107,53 @@ public class ControlaCredencialesServlet extends HttpServlet {
         tmp = usuario;
         return tmp;
     }
-    
-       private String controlaTipoUsuario(String usuario, String password) {
-        String tmp = null;
-        //TODO 
+
+    private String controlaTipoUsuario(String usuario, String password) {
+        String tmp = null;     
         //Codigo para controlar si existe el usuario en BD
         //Comprobar si existe en la base de datos
-        
+
         // si existe mirar si coincide el password
         // obtener el tipo de usuario
         // si el tipo es 1 es admin
         // si es 2 es usuario normal
         DatabaseManager.openConnection();
-        
-        String usuarioSql="SELECT * FROM usuarios WHERE usuario='"+usuario+"'";
+
+        String usuarioSql = "SELECT * FROM usuarios WHERE usuario='" + usuario + "'";
         PreparedStatement stm;
         ResultSet resultSet;
         try {
-            stm=DatabaseManager.conn.prepareStatement(usuarioSql);
-            resultSet=stm.executeQuery();
-            String passBd=null;
-            int tipoBd=0;
-            while(resultSet.next()){
-               // String usuarioBd=resultSet.getString("usuario");
-                passBd=resultSet.getString("pass");
-                tipoBd=resultSet.getInt("tipo"); 
+            stm = DatabaseManager.conn.prepareStatement(usuarioSql);
+            resultSet = stm.executeQuery();
+            String passBd = null;
+            int tipoBd = 0;
+            while (resultSet.next()) {
+                // String usuarioBd=resultSet.getString("usuario");
+                passBd = resultSet.getString("pass");
+                tipoBd = resultSet.getInt("tipo");
             }
-            if(passBd!=null && passBd.equals(password)){
-                if(tipoBd==1){
-                    tmp="admin";
+            if (passBd != null && passBd.equals(password)) {
+                if (tipoBd == 1) {
+                    tmp = "admin";
                 }
-                if(tipoBd==2){
-                    tmp="usuarioReg";
+                if (tipoBd == 2) {
+                    tmp = "usuarioReg";
                 }
-                LoggerManager.getLog().info("usuario tipo "+tipoBd);
+                LoggerManager.getLog().info("usuario tipo " + tipoBd);
             }
-            
+
             stm.close();
             resultSet.close();
-            
+
         } catch (SQLException ex) {
             LoggerManager.getLog().error(ex.toString());
-        }finally{
+        } finally {
             DatabaseManager.closeConnection();
-            
+
         }
-        
-        
-        
-       
+
         return tmp;
     }
-    
-    
 
     @Override
     public String getServletInfo() {
