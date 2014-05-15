@@ -22,7 +22,7 @@ public class Motor {
 
     @Override
     public String toString() {
-        return "Motor{" + "potencia=" + potencia + ", cilindros=" + cilindros + '}';
+         return  cilindros +" cilindros y "+ potencia +" cv.";
     }
 
     public String getPotencia() {
