@@ -139,7 +139,7 @@ public class ControlaCredencialesServlet extends HttpServlet {
                 if (tipoBd == 2) {
                     tmp = "usuarioReg";
                 }
-                LoggerManager.getLog().info("usuario tipo " + tipoBd);
+               // LoggerManager.getLog().info("usuario tipo " + tipoBd);
             }
 
             stm.close();
