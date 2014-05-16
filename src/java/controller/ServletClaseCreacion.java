@@ -48,7 +48,7 @@ public class ServletClaseCreacion extends HttpServlet {
     }
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+            throws ServletException, IOException, SQLException {
         //Abro conexion
         DatabaseManager.openConnection();
 
@@ -115,11 +115,11 @@ public class ServletClaseCreacion extends HttpServlet {
                 //controlo que tipo de vehiculo queiro añadir
                 if (tipoVehiculo.equals("Coche")) {
                     //añado el coche a la base de datos con categoria con ese index
-                    añadoVehiculo(index, coche,true);
+                    añadoVehiculo(index, coche, true);
                 }
                 if (tipoVehiculo.equals("Moto")) {
                     //añado la moto a la base de datos con categoria con ese index
-                    añadoVehiculo(index, moto,true);
+                    añadoVehiculo(index, moto, true);
                 }
 
             }
@@ -147,7 +147,11 @@ public class ServletClaseCreacion extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        try {
+            processRequest(request, response);
+        } catch (SQLException ex) {
+            Logger.getLogger(ServletClaseCreacion.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     /**
@@ -161,7 +165,11 @@ public class ServletClaseCreacion extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        try {
+            processRequest(request, response);
+        } catch (SQLException ex) {
+            Logger.getLogger(ServletClaseCreacion.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     /**
@@ -218,53 +226,42 @@ public class ServletClaseCreacion extends HttpServlet {
         }
     }
 
-  private void añadirCategoriaYVehiculo(Categoria categoria, Vehiculo vehiculo) {
+    private void añadirCategoriaYVehiculo(Categoria categoria, Vehiculo vehiculo) throws SQLException {
 
         //Para grabarlo en nuestro logger
         if (LoggerManager.DEBUG) {
             LoggerManager.getLog().info("Añadiendo: " + categoria.toString() + " y " + vehiculo.toString());
         }
-          
+
         // Declaro la sentencia sql necesaria
         String categoriaSql = "INSERT INTO categoria (tipo,descripcion) VALUES "
                 + "('" + categoria.getTipo() + "','" + categoria.getDescripcion() + "')";
-        
-        try {            
+
+        try {
             //Deshabilitar el autoCommit
-            DatabaseManager.conn.setAutoCommit(false);         
+            DatabaseManager.conn.setAutoCommit(false);
             //Añadir la categoria y obtener su index con el metodo executeUpdate
             int categoriaId = DatabaseManager.executeUpdate(categoriaSql);
             //Añadir el vehiculo a la categoria con ese index
-            boolean hacerCommit =false;  //Flag para hacer o no commit en la funcion añadoVehiculo
-            añadoVehiculo(categoriaId,vehiculo,hacerCommit);                     
+            boolean hacerCommit = false;  //Flag para hacer o no commit en la funcion añadoVehiculo
+            añadoVehiculo(categoriaId, vehiculo, hacerCommit);
             // Hacer commit 
-            DatabaseManager.conn.commit();          
+            DatabaseManager.conn.commit();
         } catch (SQLException ex) {
-            try {
-                DatabaseManager.conn.rollback();
-                LoggerManager.getLog().error("arriba "+ex.toString());
-               
-            } catch (SQLException ex1) {
-                 LoggerManager.getLog().error(ex1.toString());
-            }
-
-        }finally{
-            try {
-                DatabaseManager.conn.setAutoCommit(true);
-            } catch (SQLException ex) {
-                  LoggerManager.getLog().error(ex.toString());
-            }
+            DatabaseManager.conn.rollback();
+            LoggerManager.getLog().error("arriba " + ex.toString());
+        } finally {
+            DatabaseManager.conn.setAutoCommit(true);
         }
     }
 
-    private void añadoVehiculo(int categoriaIndex, Vehiculo vehiculo,Boolean hacerCommit) {
+    private void añadoVehiculo(int categoriaIndex, Vehiculo vehiculo, Boolean hacerCommit) {
 
-                 if (LoggerManager.DEBUG) {
-                    LoggerManager.getLog().info("indice de categoria "+ categoriaIndex);
-                    LoggerManager.getLog().info("vehiculo "+ vehiculo.getFabricante());
-                }
-        
-        
+        if (LoggerManager.DEBUG) {
+            LoggerManager.getLog().info("indice de categoria " + categoriaIndex);
+            LoggerManager.getLog().info("vehiculo " + vehiculo.getFabricante());
+        }
+
         //para añadir el vehiculo hay que añadir el motor primero para saber su id(del motor)
         String motorSql = "INSERT INTO motor (potencia,cilindros) VALUES "
                 + "('" + vehiculo.getMotor().getPotencia() + "','" + vehiculo.getMotor().getCilindros() + "')";
@@ -291,45 +288,43 @@ public class ServletClaseCreacion extends HttpServlet {
 
         try {
             //Deshabilitar el autoCommit
-            
-            if(hacerCommit){
-              DatabaseManager.conn.setAutoCommit(false);
+
+            if (hacerCommit) {
+                DatabaseManager.conn.setAutoCommit(false);
             }
-   
+
             // LLamar a una funcion que ejecuta el INSERT motorSql y
             // me devuelve el id del elemento añadido a la base de datos
             int motorId = DatabaseManager.executeUpdate(motorSql);
 
-            
             //Completo el INSERT vehiculoSql con el id del motor
             vehiculoSql = vehiculoSql.replaceAll("MOTOR_ID", String.valueOf(motorId));
-            
-   
+
             // Ejecutar el INSERT vehiculoSql y obtener el id
             DatabaseManager.executeUpdate(vehiculoSql);
 
             // Hacer commit
-            if(hacerCommit){
-            DatabaseManager.conn.commit();
+            if (hacerCommit) {
+                DatabaseManager.conn.commit();
             }
         } catch (SQLException ex) {
             try {
                 DatabaseManager.conn.rollback();
-                LoggerManager.getLog().error("abajo "+ex.toString());
-                
+                LoggerManager.getLog().error("abajo " + ex.toString());
+
             } catch (SQLException ex1) {
                 //Lo grabamos con nuestro logger
-                 LoggerManager.getLog().error(ex.toString()); 
+                LoggerManager.getLog().error(ex.toString());
             }
 
         } finally {
             //Habilitar autoCommit
             try {
-                if(hacerCommit){
-                DatabaseManager.conn.setAutoCommit(true);
+                if (hacerCommit) {
+                    DatabaseManager.conn.setAutoCommit(true);
                 }
             } catch (SQLException ex) {
-                    LoggerManager.getLog().error(ex.toString());
+                LoggerManager.getLog().error(ex.toString());
             }
         }
 
